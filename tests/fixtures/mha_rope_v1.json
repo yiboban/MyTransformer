@@ -1,0 +1,6 @@
+{
+  "fixture_version": 1,
+  "dtype": "float32",
+  "sha256": "2cd2640249e37cece256d0c63af9c1ba80026e35b48cf6634c7c1eb117ba0c67",
+  "file": "mha_rope_v1.pt"
+}

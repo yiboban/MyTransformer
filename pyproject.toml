@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mytransformer-assignment"
+version = "0.1.0"
+description = "原创的本地 Decoder-only Transformer 编程作业与自动评分器"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = { file = "LICENSE" }
+dependencies = [
+  "numpy>=1.26",
+  "regex>=2024.5.15",
+  "torch>=2.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2",
+  "pytest-json-report>=1.5",
+  "ruff>=0.9",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.2",
+  "pytest-json-report>=1.5",
+  "ruff>=0.9",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mytransformer", "grader"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers --basetemp=.pytest_tmp_root"
+testpaths = ["tests", "grader_tests"]
+markers = [
+  "bpe: Assignment 01 BPE trainer/tokenizer",
+  "primitives: Assignment 02 layers and numeric functions",
+  "rope: Assignment 03 RoPE and causal mask",
+  "attention: Assignment 04 attention and MHA",
+  "ffn: Assignment 05 SiLU and SwiGLU",
+  "block: Assignment 06 TransformerBlock",
+  "lm: Assignment 07 TransformerLM integration",
+  "slow: optional small training test",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+exclude = [".tmp_solution"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]

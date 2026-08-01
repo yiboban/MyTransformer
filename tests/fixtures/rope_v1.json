@@ -1,0 +1,6 @@
+{
+  "fixture_version": 1,
+  "dtype": "float32",
+  "sha256": "dd386bd9ba6b2ced2062aa94b2657b3418f632d0510a4fd5fbf60cdf78881ea1",
+  "file": "rope_v1.pt"
+}
