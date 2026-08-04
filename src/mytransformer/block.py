@@ -8,6 +8,9 @@ from .ffn import SwiGLU
 from .layers import RMSNorm
 
 
+# 开始组合
+# h = x + attention(rmsnorm(x))
+# y = h + swiglu(rmsnorm(h))
 class TransformerBlock(nn.Module):
     def __init__(
         self,
@@ -21,13 +24,13 @@ class TransformerBlock(nn.Module):
         dtype: torch.dtype | None = None,
     ) -> None:
         super().__init__()
-        self.attn_norm: RMSNorm
-        self.attn: MultiHeadSelfAttention
-        self.ffn_norm: RMSNorm
-        self.ffn: SwiGLU
-        # TODO(A06): 按公开名称构造两个 norm、attention、FFN。
-        raise NotImplementedError("Assignment 06: 请实现 TransformerBlock")
+        # 按公开名称构造两个 norm、attention、FFN。
+        self.attn_norm = RMSNorm(d_model=d_model,device=device,dtype=dtype)
+        self.attn = MultiHeadSelfAttention(d_model=d_model,num_heads=num_heads,max_seq_len=max_seq_len,rope_theta=rope_theta,device=device,dtype=dtype)
+        self.ffn_norm = RMSNorm(d_model=d_model,device=device,dtype=dtype)
+        self.ffn = SwiGLU(d_model=d_model,d_ff=d_ff,device=device,dtype=dtype)
 
     def forward(self, x: Tensor, position_ids: Tensor | None = None) -> Tensor:
-        # TODO(A06): x = x + Attention(RMSNorm(x)); x = x + SwiGLU(RMSNorm(x))。
-        raise NotImplementedError("Assignment 06: 请实现 TransformerBlock.forward")
+        # x = x + Attention(RMSNorm(x)); x = x + SwiGLU(RMSNorm(x))。
+        x = x + self.attn(self.attn_norm(x),position_ids)
+        return x + self.ffn(self.ffn_norm(x))

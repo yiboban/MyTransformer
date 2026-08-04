@@ -14,12 +14,16 @@ class Linear(nn.Module):
         dtype: torch.dtype | None = None,
     ) -> None:
         super().__init__()
-        # TODO(A02): 注册形状 [out_features, in_features] 的 weight，无 bias。
-        raise NotImplementedError("Assignment 02: 请实现 Linear")
+        #  注册形状 [out_features, in_features] 的 weight，无 bias。
+        self.in_features = in_features
+        self.out_features = out_features
+        self.weight = nn.Parameter(torch.empty(out_features,in_features,device=device,dtype=dtype))
+        nn.init.trunc_normal_(self.weight,std=in_features ** -0.5)
 
     def forward(self, x: Tensor) -> Tensor:
-        raise NotImplementedError("Assignment 02: 请实现 Linear.forward")
-
+        if x.shape[-1] != self.in_features:
+            raise ValueError("dim error")
+        return x @ self.weight.transpose(0,1)
 
 class Embedding(nn.Module):
     def __init__(
@@ -31,12 +35,19 @@ class Embedding(nn.Module):
         dtype: torch.dtype | None = None,
     ) -> None:
         super().__init__()
-        # TODO(A02): 注册 [num_embeddings, embedding_dim] 的 weight。
-        raise NotImplementedError("Assignment 02: 请实现 Embedding")
+        # 注册 [num_embeddings, embedding_dim] 的 weight。
+        # [V,D]
+        self.num_embeddings = num_embeddings
+        self.embedding_dim = embedding_dim
+        self.weight = nn.Parameter(torch.empty(num_embeddings,embedding_dim,device=device,dtype=dtype))
+        # 维度越大 每个分量初始化的越小
+        nn.init.trunc_normal_(self.weight,std=embedding_dim ** -0.5)
+
 
     def forward(self, token_ids: Tensor) -> Tensor:
-        raise NotImplementedError("Assignment 02: 请实现 Embedding.forward")
-
+        if token_ids.dtype not in (torch.int32,torch.int64):
+            raise ValueError("token_ids must contain integer indices")
+        return self.weight[token_ids]
 
 class RMSNorm(nn.Module):
     def __init__(
@@ -48,8 +59,20 @@ class RMSNorm(nn.Module):
         dtype: torch.dtype | None = None,
     ) -> None:
         super().__init__()
-        # TODO(A02): 注册缩放参数 weight；只沿最后一维计算 RMS。
-        raise NotImplementedError("Assignment 02: 请实现 RMSNorm")
+        # 注册缩放参数 weight；只沿最后一维计算 RMS。
+        self.d_model = d_model
+        self.eps = eps
+        self.dtype = dtype
+        self.weight = nn.Parameter(
+            torch.ones(
+                d_model,
+                device=device,
+                dtype=dtype,
+            )
+        )
 
     def forward(self, x: Tensor) -> Tensor:
-        raise NotImplementedError("Assignment 02: 请实现 RMSNorm.forward")
+        x_float = x.to(dtype=torch.float32)
+        fenmu = torch.sqrt(torch.mean(x_float * x_float,dim=-1,keepdim=True)+self.eps)
+        fenmu_t = fenmu.to(dtype=self.dtype)
+        return x / fenmu_t * self.weight
