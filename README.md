@@ -61,6 +61,10 @@ uv run python -m grader --stage lm --verbose
 
 `grader/adapters.py` 是测试与实现之间的薄连接层。如果你采用不同文件名或类名，只改 adapter 的导入/参数名映射；不要在 adapter 里补算法。
 
+## 参与贡献
+
+欢迎提交文档勘误、可复现的问题报告和脚手架改进。首次贡献请先阅读 [贡献指南](CONTRIBUTING.md)，并保留学生核心 TODO 的练习性质。
+
 ## CI 的含义
 
 默认 `Scaffold CI` 只验证 ruff、grader 自测、fixture/adapter/CLI 和脚手架状态。学生实现故意未完成，因此默认 CI 不把 student tests 的失败当作框架损坏。Actions 页面还提供手动运行的 `Student tests` workflow。
