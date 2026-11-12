@@ -40,6 +40,8 @@ uv run python -m grader --stage bpe
 
 初始学生代码在核心位置含 `TODO` 和 `NotImplementedError`，所以 stage 测试失败是正常且有意的。先读错误提示和推荐文档；不要一开始运行整个测试套件并被大量红色输出淹没。
 
+遇到张量形状、数值稳定性或梯度相关问题时，可先查阅 [常见错误排查](docs/08_常见错误排查.md)。
+
 常用命令：
 
 ```bash
